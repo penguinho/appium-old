@@ -12,10 +12,6 @@ from time import time
 from subprocess import Popen as spawncmd
 from shlex import split as splitargs
 
-###########
-# GLOBALS #
-###########
-
 # ios client class
 class iosclient(object):
 	
@@ -30,15 +26,12 @@ class iosclient(object):
 	# configuration for the iosclient
 	config = None
 	
-	# no-op method
-	def noop(self, path):
-		pass
 	# prebuild steps
-	onprebuild = noop
+	onprebuild = lambda self, xcodeprojectpath: None
 	# postbuild steps
-	onpostbuild = noop
+	onpostbuild = lambda self, xcodeprojectpath: None
 	# shutdown steps
-	shutdown = noop
+	shutdown = lambda self, xcodeprojectpath: None
 	
 	# running instruments process
 	instrumentsprocess = None
@@ -48,7 +41,6 @@ class iosclient(object):
 	iosautoworkingdirectory = None
 	# base path
 	basepath = pathsplit(path.realpath(__file__))[0]
-	
 	
 	# stores configuration information about an ios client
 	class iosclientconfig(object):
@@ -91,7 +83,7 @@ class iosclient(object):
 		self.commandindex = -1
 		compiledapppath = ''
 	
-	# checks if the ios automatio n
+	# checks if the ios automation client is running
 	def isrunning(self):
 		return self.instrumentsprocess != None and self.instrumentsprocess.poll() == None
 
@@ -212,7 +204,7 @@ class iosclient(object):
 		# add the command to the batch command queue if the client is batching
 		if self.isbatchingcommands:
 			self.batchcommandqueue.append(cmdtext)
-			return (0, 'command batched successfully')
+			return [[0, 'command batched successfully']]
 		
 		# increment the command index because this is not a batch command
 		self.commandindex = self.commandindex + 1
@@ -243,6 +235,42 @@ class iosclient(object):
 			#except:
 			#	print 'COULD NOT PARSE RESPONSE'
 	
+	# runs commands in a batch job
+	def batchissuecommands(self, commands):
+		
+		# enqueue all of the commands
+		self.isbatchingcommands = True
+		for command in commands:
+			command()
+
+		# generate on large command string
+		aggregatecommandstring = ''
+		for i in range(0, len(self.batchcommandqueue)):
+			aggregatecommandstring = aggregatecommandstring + self.batchcommandqueue[i] + '\n'
+			aggregatecommandstring = aggregatecommandstring + '"end batched automation command ' + str(i) + '";'
+			if i < (len(self.batchcommandqueue)-1):
+				aggregatecommandstring = aggregatecommandstring + '\n'
+		self.batchcommandqueue = []
+					
+		# run all of the commands at once
+		self.isbatchingcommands = False
+		result = self.issuecommand(aggregatecommandstring)
+
+		# separate out the results
+		allresults = {}
+		commandresults = []
+		lastcommandindex = 0
+		for i in range(0,len(result)):
+			if result[i][1] == 'end batched automation command ' + str(lastcommandindex):
+				allresults[lastcommandindex] = commandresults
+				lastcommandindex = lastcommandindex + 1
+				commandresults = []
+			else:
+				commandresults.append(result[i])
+	
+		return allresults
+	
+	
 	# stops running automation
 	def stop(self):
 		if not self.isrunning():
@@ -272,7 +300,7 @@ class iosclient(object):
 	def get(self, hook):
 		return self.issuecommand(hook + ';')[0][1]
 
-	# taps the element
+	# gets the value of the element
 	def getvalue(self, hook):
 		return self.issuecommand(hook + '.value();')[0][1]
 	

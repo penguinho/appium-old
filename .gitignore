@@ -10,3 +10,5 @@ python/.svn/all-wcprops
 python/.svn/entries
 
 *.svn-base
+
+.DS_Store

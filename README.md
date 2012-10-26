@@ -9,7 +9,7 @@ There are two big benefits to testing with Appium:
 
 1: Appium uses Apple's UIAutomation library under the hood to perform the automation, which means you do not have to recompile your app or modify in any way to be able to test automate it.
 
-2: In the near-future, you'll be able to write your test in *any* language, using the Selenium WebDriver API and language-specific client libraries. In this example, we're using Python. Otherwise, using UIAutomation API would require writing tests in JavaScript, and only running the tests through the Instruments application. With Appium, you can test your native iOS app with any language, and with your preferred dev tools.
+2: With Appium, you are able to write your test in your choice of programming language, using the Selenium WebDriver API and language-specific client libraries. If you only used UIAutomation, you would be required to write tests in JavaScript, and only run the tests through the Instruments application. With Appium, you can test your native iOS app with any language, and with your preferred dev tools.
 
 Quick Start
 -----------

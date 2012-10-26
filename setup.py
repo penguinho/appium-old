@@ -1,8 +1,8 @@
 from distutils.core import setup
 
 setup(
-    name='Applecart',
+    name='Appium',
     version='0.1',
-    packages=['applecart'],
+    packages=['appium'],
 )
 

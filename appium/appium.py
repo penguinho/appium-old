@@ -7,7 +7,7 @@ from subprocess import call, check_output, Popen, PIPE
 from tempfile import mkdtemp
 from time import time, sleep
 
-class Applecart:
+class Appium:
     def __init__(self, app='', ):
         self.app       = app
         self.username  = None
@@ -40,16 +40,16 @@ class Applecart:
         else:
             # Try to get username and password from file:
             config = ConfigParser.ConfigParser()
-            result = config.read(os.path.expanduser('~/.applecart'))
+            result = config.read(os.path.expanduser('~/.appium'))
             if result:
-                self.username = config.get('applecart','username')
-                self.password = config.get('applecart','password')
+                self.username = config.get('appium','username')
+                self.password = config.get('appium','password')
             else:
-                raise Exception("ERROR: You need to specify OS X name and password in ~/.applecart")
+                raise Exception("ERROR: You need to specify OS X name and password in ~/.appium")
 
     # Create temp dir
     def create_temp_dir(self):
-        self.temp_dir = mkdtemp('', 'applecart-')
+        self.temp_dir = mkdtemp('', 'appium-')
         #print self.temp_dir
 
     # Copy files
@@ -176,10 +176,10 @@ if __name__ == '__main__':
         launch(app)
     else:
       print """
-  Applecart - iOS App Automation 
+  Appium - iOS App Automation 
        
   Usage: 
     When run as a script, include the absolute path to an app:
-    $ python applecart.py ~/somethingawesome.app
+    $ python appium.py ~/somethingawesome.app
   """
 

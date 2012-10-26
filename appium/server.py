@@ -1,4 +1,4 @@
-from applecart import Applecart
+from appium import Appium
 from bottle import Bottle, request, response, redirect
 from bottle import run, static_file
 import json
@@ -15,7 +15,7 @@ def get_favicon():
 def status():
     status = {'sessionId': None, 
               'status': 0, 
-              'value': {'build': {'version': 'Applecart 1.0'}}}
+              'value': {'build': {'version': 'Appium 1.0'}}}
     return status 
 
 @app.route('/wd/hub/session', method='POST')
@@ -186,7 +186,7 @@ def find_elements(session_id=''):
     return response 
     
 
-#app.ios_client = Applecart('/path/to/your/awesome.app')
+#app.ios_client = Appium('/path/to/your/awesome.app')
 #app.ios_client.start() 
 #app.ios_client.proxy('wd_frame = mainWindow')
 #app.ios_client.proxy('elements = {}')

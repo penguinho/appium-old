@@ -1,9 +1,9 @@
-from applecart import Applecart
+from appium import Appium
 import readline
 
 def launch(app=None):
     if app: 
-        client = Applecart(app) 
+        client = Appium(app) 
         client.start() 
 
         print ""

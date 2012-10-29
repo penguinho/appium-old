@@ -188,8 +188,8 @@ def find_elements(session_id=''):
 if __name__ == '__main__':
     import sys
     if len(sys.argv) == 2:
-        app = sys.argv[1]
-        app.ios_client = Appium(app)
+        path_to_app = sys.argv[1]
+        app.ios_client = Appium(path_to_app)
         app.ios_client.start() 
         run(app, host='0.0.0.0', port=4723)
     else:

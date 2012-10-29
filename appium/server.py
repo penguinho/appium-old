@@ -184,12 +184,20 @@ def find_elements(session_id=''):
                 'status': status, 
                 'value': found_elements}
     return response 
-    
 
-#app.ios_client = Appium('/path/to/your/awesome.app')
-#app.ios_client.start() 
-#app.ios_client.proxy('wd_frame = mainWindow')
-#app.ios_client.proxy('elements = {}')
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) == 2:
+        app = sys.argv[1]
+        app.ios_client = Appium(app)
+        app.ios_client.start() 
+        run(app, host='0.0.0.0', port=4723)
+    else:
+      print """
+  Appium - iOS App Automation 
+       
+  Usage: 
+    When run as a script, include the absolute path to an app:
+    $ python server.py ~/somethingawesome.app
+  """
 
-#run(app, server='paste', host='0.0.0.0', port=8080, reloader=True)
-#run(app, host='0.0.0.0', port=4723)

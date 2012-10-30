@@ -3,15 +3,15 @@ import glob
 import os
 from os.path import exists
 from shutil import copy
-from subprocess import call, Popen, PIPE
+from subprocess import call, check_output, Popen, PIPE
 from tempfile import mkdtemp
-from time import time
+from time import time, sleep
 
-class Applecart:
-    def __init__(self, app='', username='', password=''):
+class Appium:
+    def __init__(self, app='', ):
         self.app       = app
-        self.username  = username
-        self.password  = password
+        self.username  = None
+        self.password  = None
         self.instruments_process = None
         self.command_index = -1
 
@@ -19,27 +19,37 @@ class Applecart:
         ## Do not start again if Instruments is already running
         if self.is_running():
             return True
+        self.command_index = -1
         self.get_config()
         self.create_temp_dir()
         self.copy_files()
         self.modify_bootstrap_script()
         self.kill_security_popup()
         self.launch_instruments()
+        self.wait_for_simulator()
+        self.wait_for_app()
 
     # Check if Instruments is running
     def is_running(self):
         return self.instruments_process is not None and self.instruments_process.poll() is  None
 
     def get_config(self):
-        config = ConfigParser.ConfigParser()
-        result = config.read(os.path.expanduser('~/.applecart'))
-        if result:
-            self.username = config.get('applecart','username')
-            self.password = config.get('applecart','password')
+        # Check to see if the username and password have been set already::
+        if self.username and self.password:
+            return
+        else:
+            # Try to get username and password from file:
+            config = ConfigParser.ConfigParser()
+            result = config.read(os.path.expanduser('~/.appium'))
+            if result:
+                self.username = config.get('appium','username')
+                self.password = config.get('appium','password')
+            else:
+                raise Exception("ERROR: You need to specify OS X name and password in ~/.appium")
 
     # Create temp dir
     def create_temp_dir(self):
-        self.temp_dir = mkdtemp('', 'applecart-')
+        self.temp_dir = mkdtemp('', 'appium-')
         #print self.temp_dir
 
     # Copy files
@@ -73,6 +83,35 @@ class Applecart:
                    '-e', 'UIARESULTSPATH', self.temp_dir]
         self.instruments_process = Popen(command, stdout=PIPE, stdin=None, stderr=PIPE)
         return self.instruments_process.poll() is None  # Should be True
+
+    def simulator_state(self):
+        process_states = {'true': True,
+                          'false': False}
+
+        output = check_output(["/usr/bin/osascript", "-e",
+            "tell application \"System Events\" to (name of processes) contains \"iPhone Simulator\""])
+        
+        is_running = False
+        if output:
+            output = output.strip()
+            is_running = process_states.get(output)
+        return is_running
+
+    def wait_for_simulator(self, timeout=30):
+        starttime = time()
+        while time() - starttime < timeout:
+            state = self.simulator_state()
+            if state == True:
+                self.simulator_is_running = True
+                return True
+            else:
+                sleep(.5)
+        self.simulator_is_running = False
+        return False
+
+    def wait_for_app(self):
+        # When we get a response we know the app is alive.
+        self.proxy('') 
 
     # Proxy a command to the simulator
     # using a file-based inter-process communication
@@ -127,6 +166,7 @@ class Applecart:
 
         # Kill iOS Simulator
         call("""/usr/bin/osascript -e 'tell app "iPhone Simulator" to quit'""", shell=True)
+        self.simulator_is_running = False
 
 if __name__ == '__main__':
     from interpreter import launch
@@ -136,10 +176,10 @@ if __name__ == '__main__':
         launch(app)
     else:
       print """
-  Applecart - iOS App Automation 
+  Appium - iOS App Automation 
        
   Usage: 
     When run as a script, include the absolute path to an app:
-    $ python applecart.py ~/somethingawesome.app
+    $ python appium.py ~/somethingawesome.app
   """
 

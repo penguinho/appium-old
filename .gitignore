@@ -1,14 +1,2 @@
-
-main/Utility/Properties/Resources.resources
-
-main/Testing/Properties/.DS_Store
-
-python/.DS_Store
-
-python/.svn/all-wcprops
-
-python/.svn/entries
-
-*.svn-base
-
 .DS_Store
+*.pyc

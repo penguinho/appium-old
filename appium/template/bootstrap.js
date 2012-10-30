@@ -32,6 +32,8 @@ var target      = UIATarget.localTarget();
 var application = target.frontMostApp();
 var host = target.host();
 var mainWindow  = application.mainWindow();
+var wd_frame = mainWindow
+var elements = {}
 
 // loop variables
 var runLoop = true;

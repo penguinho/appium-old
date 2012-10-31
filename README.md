@@ -15,13 +15,13 @@ Quick Start
 -----------
 
 To get started, clone the repo:<br />
-`git clone git://github.com/saucelabs/appium`.
+`git clone git://github.com/hugs/appium`
 
 Next, change into the 'appium' directory, and install dependencies:<br />
-`pip install -r requirements.txt`.
+`pip install -r requirements.txt`
 
-Create a file in your home folder with that will store your username and password. (This is required to beat a security dialog that can appear when launching your ios app).
-`touch ~/appium.py'
+Create a file in your home folder with that will store your username and password. (This is required to beat a security dialog that can appear when launching your ios app).<br />
+`touch ~/appium.py`
 
 The file should read something like:
 
@@ -38,5 +38,8 @@ To launch a webdriver-compatible server, run:<br />
 Contributing
 ------------
 
+
 Mailing List
 -----------
+
+<a href="https://groups.google.com/d/forum/appium-discuss">Discussion Group</a>
